@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
-import { ArrowRight, CloudSun, MapPin, Search, Sparkles, Sun, Wind } from "lucide-react";
+import { AlertCircle, ArrowRight, CloudSun, MapPin, Search, Sparkles, Sun, Wind } from "lucide-react";
+import { validateLocation, validateLocationFormat } from "@/lib/location-validation";
 
 type Block = { type: "heading" | "paragraph" | "list" | "quote"; text?: string; items?: string[]; level?: number };
 
@@ -55,12 +56,21 @@ export default function Index() {
   const [searchedLocation, setSearchedLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
+  const [validating, setValidating] = useState(false);
 
   async function searchWeather(event?: FormEvent, selected = location) {
     event?.preventDefault();
+    if (loading || validating) return;
+    const formatCheck = validateLocationFormat(selected);
+    if (!formatCheck.valid) { setValidationError(formatCheck.message); return; }
     const query = selected.trim();
-    if (!query || loading) return;
-    setLocation(query); setLoading(true); setError(""); setReport(""); setWeather(null); setSearchedLocation(query);
+    setLocation(query); setValidationError("");
+    setValidating(true);
+    const check = await validateLocation(query);
+    setValidating(false);
+    if (!check.valid) { setValidationError(check.message); return; }
+    setLoading(true); setError(""); setReport(""); setWeather(null); setSearchedLocation(query);
     try {
       const url = new URL("https://hopeu.app.n8n.cloud/webhook/weather-api");
       url.searchParams.set("loc", query);
@@ -89,11 +99,12 @@ export default function Index() {
             <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#fff1d6] px-3.5 py-2 text-xs font-extrabold uppercase tracking-[.12em] text-[#a66a11]"><Sparkles size={14} /> A brighter way to check the weather</div>
             <h1 className="max-w-xl text-[2.85rem] font-black leading-[1.04] tracking-[-.055em] text-[#18365e] sm:text-6xl">The forecast, <span className="text-[#3979e8]">with a little</span> sunshine.</h1>
             <p className="mt-5 max-w-lg text-base leading-7 text-[#647b99] sm:text-lg">Pick a place. We’ll bring you a thoughtful weather report for wherever the day takes you.</p>
-            <form onSubmit={(event) => searchWeather(event)} className="mt-8 flex max-w-xl items-center gap-2 rounded-[22px] border border-[#e1eaf7] bg-white p-2.5 shadow-[0_14px_40px_rgba(50,93,156,.10)] focus-within:border-[#94b8f4]">
+            <form noValidate onSubmit={(event) => searchWeather(event)} className={`mt-8 flex max-w-xl items-center gap-2 rounded-[22px] border bg-white p-2.5 shadow-[0_14px_40px_rgba(50,93,156,.10)] ${validationError ? "border-[#e8a598] focus-within:border-[#df715a]" : "border-[#e1eaf7] focus-within:border-[#94b8f4]"}`}>
               <MapPin className="ml-3 shrink-0 text-[#7c94b3]" size={20} />
-              <input aria-label="City or country" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Enter a city or country..." className="min-w-0 flex-1 bg-transparent px-1 py-3 text-sm font-semibold text-[#19365c] outline-none placeholder:font-medium placeholder:text-[#a4b3c7]" />
-              <button disabled={loading || !location.trim()} className="flex shrink-0 items-center gap-2 rounded-[15px] bg-[#3979e8] px-4 py-3 text-sm font-bold text-white shadow-md shadow-blue-200 transition hover:bg-[#2869d7] disabled:cursor-not-allowed disabled:opacity-55">{loading ? "Looking…" : "Find weather"}<ArrowRight size={16} /></button>
+              <input aria-label="City or country" aria-invalid={validationError ? true : undefined} aria-describedby={validationError ? "location-error" : undefined} value={location} onChange={(event) => { setLocation(event.target.value); if (validationError) setValidationError(""); }} placeholder="Enter a city or country..." maxLength={60} className="min-w-0 flex-1 bg-transparent px-1 py-3 text-sm font-semibold text-[#19365c] outline-none placeholder:font-medium placeholder:text-[#a4b3c7]" />
+              <button disabled={loading || validating || !location.trim()} className="flex shrink-0 items-center gap-2 rounded-[15px] bg-[#3979e8] px-4 py-3 text-sm font-bold text-white shadow-md shadow-blue-200 transition hover:bg-[#2869d7] disabled:cursor-not-allowed disabled:opacity-55">{validating ? "Checking…" : loading ? "Looking…" : "Find weather"}<ArrowRight size={16} /></button>
             </form>
+            {validationError && <p id="location-error" role="alert" className="mt-3 flex max-w-xl items-start gap-2 rounded-2xl bg-[#fff0ec] px-4 py-3 text-sm font-semibold text-[#a4473a]"><AlertCircle size={17} className="mt-0.5 shrink-0" />{validationError}</p>}
             <div className="mt-5 flex flex-wrap items-center gap-2"><span className="mr-1 text-xs font-bold text-[#8a9bb1]">TRY</span>{suggestions.map((city) => <button key={city} onClick={() => searchWeather(undefined, city)} className="rounded-full border border-[#e1eaf7] bg-white px-3.5 py-2 text-xs font-bold text-[#59708e] transition hover:border-[#a9c5f5] hover:text-[#3979e8]">{city}</button>)}</div>
           </div>
           <div className="relative mx-auto flex h-64 w-full max-w-md items-center justify-center sm:h-80">
