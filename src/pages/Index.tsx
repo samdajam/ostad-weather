@@ -34,10 +34,9 @@ function inlineText(value: string) {
 
 function extractOutput(data: unknown): string {
   let value: unknown = data;
-  if (Array.isArray(value)) value = value[0];
+  if (Array.isArray(value)) value = value.find((item) => item && typeof item === "object" && "output" in item);
   if (value && typeof value === "object" && "output" in value) value = (value as { output: unknown }).output;
   if (typeof value === "string") return value;
-  if (value && typeof value === "object" && "output" in value) return String((value as { output: unknown }).output);
   throw new Error("The response did not include an output field.");
 }
 
@@ -56,7 +55,7 @@ export default function Index() {
     if (!query || loading) return;
     setLocation(query); setLoading(true); setError(""); setReport(""); setSearchedLocation(query);
     try {
-      const url = new URL("http://localhost:5678/webhook/weather-api");
+      const url = new URL("https://hopeu.app.n8n.cloud/webhook-test/weather-api");
       url.searchParams.set("loc", query);
       const response = await fetch(url.toString());
       if (!response.ok) throw new Error(`Weather request failed (${response.status}). Please try again.`);
