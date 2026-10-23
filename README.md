@@ -53,6 +53,10 @@ Update the webhook URL in `src/pages/Index.tsx` if your workflow endpoint change
 - `src/components/` — shared and UI components
 - `src/globals.css` — global styles
 
+## Copyright
+
+© Sikander. Visit [sikander.dev](https://sikander.dev).
+
 ## License
 
 No license has been specified.
