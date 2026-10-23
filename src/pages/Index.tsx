@@ -94,20 +94,24 @@ export default function Index() {
 
       <section id="top" className="relative mx-auto max-w-6xl px-5 pb-14 pt-7 sm:px-8 sm:pt-12">
         <div className="pointer-events-none absolute -right-16 top-0 hidden h-72 w-72 rounded-full bg-[#ffdf93]/40 blur-3xl md:block" />
-        <div className="relative grid items-center gap-10 lg:grid-cols-[1.1fr_.9fr]">
-          <div className="max-w-2xl">
+        <div className="relative flex flex-col gap-6 lg:grid lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:gap-10">
+          <div className="contents lg:block lg:max-w-2xl">
+            <div className="order-1 max-w-2xl">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#fff1d6] px-3.5 py-2 text-xs font-extrabold uppercase tracking-[.12em] text-[#a66a11]"><Sparkles size={14} /> A brighter way to check the weather</div>
             <h1 className="max-w-xl text-[2.85rem] font-black leading-[1.04] tracking-[-.055em] text-[#18365e] sm:text-6xl">The forecast, <span className="text-[#3979e8]">with a little</span> sunshine.</h1>
             <p className="mt-5 max-w-lg text-base leading-7 text-[#647b99] sm:text-lg">Pick a place. We’ll bring you a thoughtful weather report for wherever the day takes you.</p>
-            <form noValidate onSubmit={(event) => searchWeather(event)} className={`mt-8 flex max-w-xl items-center gap-2 rounded-[22px] border bg-white p-2.5 shadow-[0_14px_40px_rgba(50,93,156,.10)] ${validationError ? "border-[#e8a598] focus-within:border-[#df715a]" : "border-[#e1eaf7] focus-within:border-[#94b8f4]"}`}>
+            </div>
+            <div className="order-3 max-w-2xl">
+            <form noValidate onSubmit={(event) => searchWeather(event)} className={`flex lg:mt-8 max-w-xl items-center gap-2 rounded-[22px] border bg-white p-2.5 shadow-[0_14px_40px_rgba(50,93,156,.10)] ${validationError ? "border-[#e8a598] focus-within:border-[#df715a]" : "border-[#e1eaf7] focus-within:border-[#94b8f4]"}`}>
               <MapPin className="ml-3 shrink-0 text-[#7c94b3]" size={20} />
               <input aria-label="City or country" aria-invalid={validationError ? true : undefined} aria-describedby={validationError ? "location-error" : undefined} value={location} onChange={(event) => { setLocation(event.target.value); if (validationError) setValidationError(""); }} placeholder="Enter a city or country..." maxLength={60} className="min-w-0 flex-1 bg-transparent px-1 py-3 text-sm font-semibold text-[#19365c] outline-none placeholder:font-medium placeholder:text-[#a4b3c7]" />
               <button disabled={loading || validating || !location.trim()} className="flex shrink-0 items-center gap-2 rounded-[15px] bg-[#3979e8] px-4 py-3 text-sm font-bold text-white shadow-md shadow-blue-200 transition hover:bg-[#2869d7] disabled:cursor-not-allowed disabled:opacity-55">{validating ? "Checking…" : loading ? "Looking…" : "Find weather"}<ArrowRight size={16} /></button>
             </form>
             {validationError && <p id="location-error" role="alert" className="mt-3 flex max-w-xl items-start gap-2 rounded-2xl bg-[#fff0ec] px-4 py-3 text-sm font-semibold text-[#a4473a]"><AlertCircle size={17} className="mt-0.5 shrink-0" />{validationError}</p>}
             <div className="mt-5 flex flex-wrap items-center gap-2"><span className="mr-1 text-xs font-bold text-[#8a9bb1]">TRY</span>{suggestions.map((city) => <button key={city} onClick={() => searchWeather(undefined, city)} className="rounded-full border border-[#e1eaf7] bg-white px-3.5 py-2 text-xs font-bold text-[#59708e] transition hover:border-[#a9c5f5] hover:text-[#3979e8]">{city}</button>)}</div>
+            </div>
           </div>
-          <div className="relative mx-auto flex h-64 w-full max-w-md items-center justify-center sm:h-80">
+          <div className="relative order-2 mx-auto flex h-64 w-full max-w-md items-center justify-center sm:h-80">
             <div className="absolute h-56 w-56 rounded-full bg-[#ffdf92] sm:h-64 sm:w-64" />
             <div className="absolute right-[11%] top-[14%] text-[#f1b849]"><Sparkles size={28} /></div>
             <div className="absolute left-[13%] top-[25%] text-[#7eb5f5]"><Sparkles size={18} /></div>
