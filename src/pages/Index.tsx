@@ -46,7 +46,7 @@ function parseWeatherResponse(data: unknown): WeatherPayload {
   return { location: locationNode.location, current: locationNode.current, output: outputNode.output };
 }
 
-const suggestions = ["Tokyo", "Copenhagen", "New York", "Cape Town"];
+const suggestions = ["Dhaka", "Tokyo", "Copenhagen", "New York", "Cape Town"];
 
 export default function Index() {
   const [location, setLocation] = useState("");
@@ -78,7 +78,7 @@ export default function Index() {
   return (
     <main className="min-h-screen overflow-hidden bg-[#f5f9ff] text-[#19365c]">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6 sm:px-8">
-        <a className="flex items-center gap-2.5 font-extrabold tracking-tight text-[#245fce]" href="#top"><span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#e3edff]"><CloudSun size={23} /></span><span className="text-xl">skyspell</span></a>
+        <a className="flex items-center gap-2.5 font-extrabold tracking-tight text-[#245fce]" href="#top"><span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#e3edff]"><CloudSun size={23} /></span><span className="text-xl">Ostad Weather</span></a>
         <span className="hidden items-center gap-2 rounded-full border border-[#e0e9f7] bg-white px-4 py-2 text-xs font-bold text-[#59708e] sm:flex"><span className="h-2 w-2 rounded-full bg-[#48c69a]" /> YOUR LITTLE WEATHER WINDOW</span>
       </header>
 
